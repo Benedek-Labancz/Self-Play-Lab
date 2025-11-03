@@ -5,7 +5,7 @@ import numpy as np
 from copy import deepcopy
 from src.enums.game import RoleEnum, BoardEnum
 from abc import ABC, abstractmethod
-from src.environments.printing import (
+from src.environments.render.printing import (
     clear_terminal,
     print_board
 )
@@ -48,13 +48,25 @@ class BaseEnv(gym.Env, ABC):
     def _switch_player(self):
         self._current_player, self._next_player = self._next_player, self._current_player
 
+    def _get_action_mask(self, state: np.array) -> np.array:
+        '''
+        Returns an array with 1s and 0s at the coordinates corresponding 
+        to valid and invalid actions respectively.
+        (Important note: we make the assumption here that an action is valid
+        iff the corresponding square is empty. We do not use the internal method checking
+        this property in order to gain efficiency.)
+        '''
+        return (state == BoardEnum.EMPTY.value)
+
     def _get_obs(self) -> dict:
         '''
-        Returns the observation of the board state and the current player.
+        Returns the observation of the board state and the current player,
+        along with the action mask describing valid actions/
         '''
         return {
             "current_player": self._current_player,
-            "board": self._board_state
+            "board": self._board_state,
+            "action_mask": self._get_action_mask()
         }
 
     def _get_info(self) -> dict:
@@ -92,6 +104,28 @@ class BaseEnv(gym.Env, ABC):
         info = self._get_info()
 
         return observation, info
+    
+    def _simulate_step(self, state: np.array, player: int, 
+                       action: np.array) -> tuple[np.array, float] | Exception:
+        '''
+        This method does not change the internal state of this class.
+        The purpose of it is to provide knowledge of the game rules to the agents
+        interacting with the environment.
+        It takes a state and a player along with the performed action and
+        simulates a step of the game, returning the new state of the board and the
+        reward associated with it. 
+        (Important note: this reward signal is computed in the way specified by the class instance,
+        i.e. it might be dense, sparse, etc.)
+        '''
+        if not self._valid_action(action):
+            raise Exception(f"Invalid action {tuple(action)} encountered.")
+        
+        # TODO: making this copy here is a costly operation, which might cause problems when searching through environments with large action-spaces
+        new_state = deepcopy(state)
+        new_state[tuple(action)] = player
+        reward = self._get_reward(state, player, action, new_state)
+        return new_state, reward
+
 
     def step(self, 
              action: np.array) -> tuple[dict, float, bool, bool, dict] | Exception:
