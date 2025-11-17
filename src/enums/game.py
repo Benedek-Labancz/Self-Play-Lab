@@ -1,11 +1,11 @@
 from enum import Enum
 
 class RoleEnum(Enum):
-    X = 1
-    O = 2
+    X = 0
+    O = 1
 
 class BoardEnum(Enum):
-    EMPTY = 0
     X = RoleEnum.X
     O = RoleEnum.O
+    EMPTY = 2
     INVALID = 3
