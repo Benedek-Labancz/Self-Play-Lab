@@ -1,0 +1,5 @@
+n: 1
+player0: "configs\\agents\\random.yml"
+player1: "configs\\agents\\random.yml"
+game: "configs\\games\\twodims_default.yml"
+log_dir: "logs\\"

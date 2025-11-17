@@ -1,0 +1,6 @@
+name: '4CE-TwoDims'
+max_timesteps: 9
+kwargs:
+  render_mode: 'human'
+  reward_type: 'dense'
+  bonus: False
