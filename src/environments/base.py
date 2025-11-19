@@ -51,7 +51,7 @@ class BaseEnv(gym.Env, ABC):
     def get_next_player(self) -> int:
         return self._next_player
 
-    def _get_action_mask(self, state: np.array) -> np.array:
+    def get_action_mask(self, state: np.array) -> np.array:
         '''
         Returns an array with 1s and 0s at the coordinates corresponding 
         to valid and invalid actions respectively.
@@ -69,7 +69,7 @@ class BaseEnv(gym.Env, ABC):
         return {
             "current_player": self._current_player,
             "board": self._board_state,
-            "action_mask": self._get_action_mask(self._board_state)
+            "action_mask": self.get_action_mask(self._board_state)
         }
 
     def _get_info(self) -> dict:
@@ -127,7 +127,12 @@ class BaseEnv(gym.Env, ABC):
         new_state = deepcopy(state)
         new_state[tuple(action)] = player
         reward = self._get_reward(state, player, action, new_state)
-        return new_state, reward
+        observation = {
+            "current_player": player,
+            "board": new_state,
+            "action_mask": self.get_action_mask(new_state)
+        }
+        return observation, reward
 
 
     def step(self, 
@@ -149,9 +154,9 @@ class BaseEnv(gym.Env, ABC):
 
         reward = self._get_reward(ground_state, self._current_player, action, self._board_state)
 
-        self._score[self._current_player] = self._get_score(self._board_state, self._current_player)
+        self._score[self._current_player] = self.get_score(self._board_state, self._current_player)
 
-        terminated = self._terminal_state(self._board_state)
+        terminated = self.terminal_state(self._board_state)
         truncated = self.timestep >= self.max_timesteps
 
         self._switch_player()
@@ -174,7 +179,7 @@ class BaseEnv(gym.Env, ABC):
         else:
             return False
         
-    def _terminal_state(self, state: np.array) -> bool:
+    def terminal_state(self, state: np.array) -> bool:
         '''
         A state is terminal if and only if there is no empty
         square left on the board.
@@ -187,7 +192,7 @@ class BaseEnv(gym.Env, ABC):
         '''
         The player with more points wins. In case of a tie, there is no winner.
         '''
-        scores = [self._get_score(state, player) for player in self._players]
+        scores = [self.get_score(state, player) for player in self._players]
         max_score, min_score = scores.max(), scores.min()
         if max_score == min_score:
             return None
@@ -202,7 +207,7 @@ class BaseEnv(gym.Env, ABC):
         pass
 
     @abstractmethod
-    def _get_score(self, state: np.array, player: int) -> int:
+    def get_score(self, state: np.array, player: int) -> int:
         '''
         Determines the total score of the given player
         according to the game rules. Subclasses must implement this.
