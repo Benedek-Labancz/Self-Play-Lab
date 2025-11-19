@@ -1,0 +1,5 @@
+name: 'MinimaxAgent'
+kwargs:
+  random_seed: 42
+  search_depth: 4
+  epsilon: 0

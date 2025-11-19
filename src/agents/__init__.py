@@ -10,4 +10,4 @@ List of Agents:
     5. ...
 '''
 
-__all__ = ['RandomAgent']
+__all__ = ['RandomAgent', 'MinimaxAgent']

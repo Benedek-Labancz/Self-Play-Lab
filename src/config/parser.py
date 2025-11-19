@@ -14,8 +14,9 @@ from pathlib import Path
 from yaml import safe_load
 from .schemas import AgentConfig, GenerationConfig, GameConfig
 import src.agents.random
+import src.agents.minimax
 
-AGENTS_SUBMODULES = [src.agents.random]
+AGENTS_SUBMODULES = [src.agents.random, src.agents.minimax]
 
 def parse_agent_config(path: str | Path) -> tuple[Any, AgentConfig] | Exception:
     if type(path) == str:
