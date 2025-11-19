@@ -47,8 +47,8 @@ class TwoDims(BaseEnv):
         '''
         Reward equals the immediate score received due to the action.
         '''
-        previous_score = self._get_score(state, player)
-        new_score = self._get_score(new_state, player)
+        previous_score = self.get_score(state, player)
+        new_score = self.get_score(new_state, player)
         return new_score - previous_score
     
     def _get_bonus(self, state: np.array, player: int) -> float:
@@ -61,7 +61,7 @@ class TwoDims(BaseEnv):
                 return self.bonus_value
         return 0
 
-    def _get_score(self, state: np.array, player: int) -> float:
+    def get_score(self, state: np.array, player: int) -> float:
         '''
         Calculating total score of a player according to
         standard rules of Tic-Tac-Toe, 3-in-a-row scores a point.
