@@ -61,26 +61,6 @@ class TwoDims(BaseEnv):
                 return self.bonus_value
         return 0
 
-    def get_score(self, state: np.array, player: int) -> float:
-        '''
-        Calculating total score of a player according to
-        standard rules of Tic-Tac-Toe, 3-in-a-row scores a point.
-        '''
-
-        # We need to twist the coordinates a bit for our purpose
-        scoring_positions = np.transpose(self._scoring_cases, axes=(2, 0, 1)) # (8, 3, 2) -> (2, 8, 3)
-        rows, cols = scoring_positions[0], scoring_positions[1]
-
-        # Board state simplified to True where the player's marks are,
-        # and False everywhere else
-        board_mask = (state == player)
-
-        is_at_position = board_mask[rows, cols] # (8, 3)
-        scores = np.all(is_at_position, axis=1).astype(int) # (8)
-
-        total_score = scores.sum()
-        return total_score
-
     def _get_scoring_cases(self) -> np.array:
         '''
         Compute all the N cases of coordinate triplets

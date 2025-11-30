@@ -199,17 +199,30 @@ class BaseEnv(gym.Env, ABC):
         else:
             return self._players[scores.index(max_score)]
 
+    def get_score(self, state: np.array, player: int) -> float:
+        '''
+        Calculating total score of a player according to
+        standard rules of Tic-Tac-Toe, 3-in-a-row scores a point.
+        '''
+
+        # Bring the last axis to the front. This is where we can index into the array
+        scoring_positions = np.transpose(self._scoring_cases, axes=(2, 0, 1)) # (N, 3, size) -> (N, size, 3)
+
+        # Board state simplified to True where the player's marks are,
+        # and False everywhere else
+        board_mask = (state == player)
+
+        is_at_position = board_mask[*scoring_positions] # (N, 3)
+
+
+        scores = np.all(is_at_position, axis=1).astype(int) # (N)
+
+        total_score = scores.sum()
+        return total_score
+    
     @abstractmethod
     def _get_reward(self, state: np.array, player: int, action: np.array, new_state: np.array) -> float:
         '''
         Determines R(s, a, s'). Subclasses must implement this method.
-        '''
-        pass
-
-    @abstractmethod
-    def get_score(self, state: np.array, player: int) -> int:
-        '''
-        Determines the total score of the given player
-        according to the game rules. Subclasses must implement this.
         '''
         pass
