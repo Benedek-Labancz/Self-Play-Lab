@@ -20,6 +20,8 @@ class Logger:
         self.episode_count = 0
         
         with h5py.File(self.filepath, 'w') as f:
+            f.create_group('configs')
+            f.create_group('episodes')
             f.attrs['experiment_name'] = self.experiment_name
 
         # Internal storage for current episode data
@@ -30,8 +32,8 @@ class Logger:
         self.rewards = []
 
     def log_config(self, config: dict, name: str) -> None:
-        with h5py.File(self.filepath, 'w') as f:
-            f.attrs[name] = json.dumps(config)
+        with h5py.File(self.filepath, 'a') as f:
+            f['configs'].attrs[name] = json.dumps(config)
 
     def log_step(self, state: np.ndarray, player: np.ndarray, 
                     observation: np.ndarray, action: np.ndarray, 
@@ -56,7 +58,7 @@ class Logger:
             rewards: (num_steps,) - scalar per step
         """
         with h5py.File(self.filepath, 'a') as f:
-            episode_group = f.create_group(f'episode_{self.episode_count}')
+            episode_group = f['episodes'].create_group(f'episode_{self.episode_count}')
             
             # Store all data without compression for perfect recovery
             episode_group.create_dataset('states', data=states, compression=None)
