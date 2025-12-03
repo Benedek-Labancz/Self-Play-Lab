@@ -16,6 +16,7 @@ if __name__ == "__main__":
         print(f"Size: {size_mb:.2f} MB")
     
         print("Experiment Name:", f.attrs['experiment_name'])
+        print("Player IDs:", f.attrs['player_ids'])
         print("\nConfigs:")
         for config_name, config_json in f['configs'].attrs.items():
             print(f"  {config_name}: {config_json}")
