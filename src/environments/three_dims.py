@@ -3,6 +3,7 @@ import numpy as np
 
 from .two_dims import TwoDims
 
+
 class ThreeDims(TwoDims):
 
     dimensions = 3
@@ -43,4 +44,3 @@ class ThreeDims(TwoDims):
         ])
 
         return np.concatenate((columns, diagonals), axis=0)
-    

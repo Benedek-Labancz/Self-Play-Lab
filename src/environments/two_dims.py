@@ -85,8 +85,3 @@ class TwoDims(BaseEnv):
         ])
 
         return np.concatenate((horizontals, verticals, diagonals), axis=0)
-    
-    def render(self) -> None:
-        if self.render_mode in ["human", "ansi"]:
-            clear_terminal()
-            print_board(self._board_state)
