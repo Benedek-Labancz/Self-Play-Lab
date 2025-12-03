@@ -30,9 +30,7 @@ from src.enums.game import RoleEnum
 from src.logging.logger import Logger
 import src.environments
 
-def generate_game(env: Any, p0: Any, p1: Any, logger: any) -> list:
-    # TODO: do we need player configs here for logging? And also log_dir?
-
+def generate_game(env: Any, p0: Any, p1: Any, logger: Logger) -> list:
     '''
     Simulate a game between two players.
     Convention is p0 = X (first player), p1 = O
