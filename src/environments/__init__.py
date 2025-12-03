@@ -14,6 +14,12 @@ def register_envs():
         max_episode_steps=9
     )
 
+    register(
+        id='4CE-ThreeDims',
+        entry_point='4CE-Reloaded.src.environments.three_dims:ThreeDims',
+        max_episode_steps=27
+    )
+
 register_envs()
 
-__all__ = ['TwoDims']
+__all__ = ['TwoDims', 'ThreeDims']
