@@ -35,6 +35,10 @@ class Logger:
         with h5py.File(self.filepath, 'a') as f:
             f['configs'].attrs[name] = json.dumps(config)
 
+    def log_player_ids(self, player_ids: list) -> None:
+        with h5py.File(self.filepath, 'a') as f:
+            f.attrs['player_ids'] = player_ids
+
     def log_step(self, state: np.ndarray, player: np.ndarray, 
                     observation: np.ndarray, action: np.ndarray, 
                     reward: np.ndarray) -> None:

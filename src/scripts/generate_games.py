@@ -14,6 +14,7 @@ Add path to config using the argument:
 
 import sys
 from pathlib import Path
+from tqdm import tqdm
 
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
@@ -79,4 +80,5 @@ if __name__ == '__main__':
     logger.log_config(dict(player0_config), "player0_config")
     logger.log_config(dict(player1_config), "player1_config")
     logger.log_config(dict(game_config), "game_config")
-    games = [generate_game(game, player0, player1, logger) for i in range(config.n)]
+    logger.log_player_ids([RoleEnum.X.value, RoleEnum.O.value])
+    games = [generate_game(game, player0, player1, logger) for i in tqdm(range(config.n))]
