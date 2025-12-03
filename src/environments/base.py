@@ -5,6 +5,10 @@ from gymnasium import spaces
 import numpy as np
 from typing import Optional
 from src.enums.game import RoleEnum, BoardEnum
+from src.environments.render.printing import (
+    clear_terminal,
+    print_board
+)
 
 
 class BaseEnv(gym.Env, ABC):
@@ -219,6 +223,17 @@ class BaseEnv(gym.Env, ABC):
 
         total_score = scores.sum()
         return total_score
+    
+    def get_board_state(self) -> np.array:
+        return self._board_state
+    
+    def render(self):
+        if self.render_mode in ["ansi"]:
+            clear_terminal()
+            print(f"Score - X: {self._score[RoleEnum.X.value]} | O: {self._score[RoleEnum.O.value]}\n")
+            for i in range(self.size):
+                print_board(self._board_state[i])
+                print("\n")
     
     @abstractmethod
     def _get_reward(self, state: np.array, player: int, action: np.array, new_state: np.array) -> float:
