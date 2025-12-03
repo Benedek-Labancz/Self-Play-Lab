@@ -8,6 +8,7 @@ class GenerationConfig(BaseModel):
     player1: str | Path
     game: str | Path
     log_dir: str | Path
+    experiment_name: Optional[str] = None
 
 class AgentConfig(BaseModel):
     name: str

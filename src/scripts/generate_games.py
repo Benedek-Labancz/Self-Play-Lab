@@ -6,9 +6,10 @@ Config of the script:
     - player1 : (string) : path to agent 2's config
     - game    : (string) : path to the game config
     - log_dir : (string) : path to the logging directory
+    - experiment_name : (string, optional) : name of the experiment.
 
 Add path to config using the argument:
-    --config "path/to/config"  
+    --config "path/to/config"
 '''
 
 import sys
@@ -26,9 +27,10 @@ from src.config.parser import parse_agent_config, parse_generation_config, parse
 from src.config.factory import create_env_from_config
 from src.config.schemas import GameConfig
 from src.enums.game import RoleEnum
+from src.logging.logger import Logger
 import src.environments
 
-def generate_game(env: Any, p0: Any, p1: Any):
+def generate_game(env: Any, p0: Any, p1: Any, logger: any) -> list:
     # TODO: do we need player configs here for logging? And also log_dir?
 
     '''
@@ -50,10 +52,13 @@ def generate_game(env: Any, p0: Any, p1: Any):
         # We add the observation about the new state to the history of the next player because moves alternate
         histories[next_player].append(observation)
 
-        env.render()
-        _ = input()
-
-        # perhaps some logging logic here ?
+        logger.log_step(env.get_board_state(), 
+                        current_player, 
+                        observation['board'], 
+                        action,
+                        reward)
+    
+    logger.end_episode()
     env.close()
 
     return histories
@@ -72,5 +77,8 @@ if __name__ == '__main__':
     game_config = parse_game_config(config.game)
     game = create_env_from_config(game_config)
 
-    # TODO: need to dump data in the log-dir here
-    games = [generate_game(game, player0, player1) for i in range(config.n)]
+    logger = Logger(config.log_dir, config.experiment_name)
+    logger.log_config(dict(player0_config), "player0_config")
+    logger.log_config(dict(player1_config), "player1_config")
+    logger.log_config(dict(game_config), "game_config")
+    games = [generate_game(game, player0, player1, logger) for i in range(config.n)]
