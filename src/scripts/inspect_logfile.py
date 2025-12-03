@@ -1,5 +1,6 @@
 import h5py
 from argparse import ArgumentParser
+from pathlib import Path
 
 
 if __name__ == "__main__":
@@ -9,6 +10,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     with h5py.File(args.file, 'r') as f:
+        filepath = Path(args.file)
+        size_bytes = filepath.stat().st_size
+        size_mb = size_bytes / (1024 * 1024)
+        print(f"Size: {size_mb:.2f} MB")
+    
         print("Experiment Name:", f.attrs['experiment_name'])
         print("\nConfigs:")
         for config_name, config_json in f['configs'].attrs.items():
