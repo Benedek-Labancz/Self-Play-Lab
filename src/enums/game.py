@@ -5,7 +5,7 @@ class RoleEnum(Enum):
     O = 1
 
 class BoardEnum(Enum):
-    X = RoleEnum.X
-    O = RoleEnum.O
+    X = RoleEnum.X.value
+    O = RoleEnum.O.value
     EMPTY = 2
     INVALID = 3
