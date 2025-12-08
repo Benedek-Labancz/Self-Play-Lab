@@ -7,10 +7,16 @@ import numpy as np
 from .base import BaseAgent
 
 class MinimaxAgent(BaseAgent):
-    def __init__(self, search_depth: int, epsilon: int = 0, random_seed: int = 42) -> None:
+    def __init__(self, search_depth: int, epsilon: float = 0, random_seed: int = 42) -> None:
         super().__init__(random_seed=random_seed)
+        if not (0 <= epsilon <= 1):
+            raise ValueError(f"epsilon must be in [0, 1], got {epsilon}")
+        if search_depth < 1:
+            raise ValueError(f"search_depth must be >= 1, got {search_depth}")
         self.search_depth = search_depth
         self.epsilon = epsilon
+
+        self.nodes_searched = 0
 
     def choose_action(self, env: Any, history: list[dict]) -> np.array:
         '''
@@ -19,6 +25,8 @@ class MinimaxAgent(BaseAgent):
         and probability (1 - epsilon):
             - choose the action that leads to the state with the greatest *minimax value*
         '''
+        self.nodes_searched = 0
+
         observation = history[-1]
         dim_indices = list(np.nonzero(observation["action_mask"])) # [rows, columns] in 2D, generalises for higher dimensions
         num_valid_actions = len(dim_indices[0])
@@ -28,8 +36,8 @@ class MinimaxAgent(BaseAgent):
             return action
         else:
             actions = np.stack(dim_indices).T # (num_valid_actions, num_dimensions)
-            root_current_player = env.get_current_player() 
-            root_next_player = env.get_next_player()
+            root_current_player = observation["current_player"]
+            root_next_player = observation["next_player"]
 
             next_players_observations = np.apply_along_axis(lambda a: env.simulate_step(observation["board"], root_current_player, a)[0], axis=1, arr=actions)
             # The next player will want to minimise the minimax value..
@@ -40,7 +48,10 @@ class MinimaxAgent(BaseAgent):
             action = actions[action_idx]
             return action
         
-    def get_minimax_value(self, env: Any, observation: dict, current_player: int, next_player: int, current_role: str, next_role: str, depth: int) -> float:
+    def get_minimax_value(self, env: Any, observation: dict,
+                          current_player: int, next_player: int, 
+                          current_role: str, next_role: str, 
+                          depth: int) -> float:
         '''
         Compute the minimax value of `observation`, where "board" represents the board position.
         Search is carried out until the agent's specified search depth is reached.
@@ -50,9 +61,10 @@ class MinimaxAgent(BaseAgent):
         `env` is used to gain access to environment dynamics, i.e. the rules of the game.
         This is needed to perform search.
         '''
+        self.nodes_searched += 1
         if depth == self.search_depth or env.terminal_state(observation["board"]):
-            root_current_player = env.get_current_player() # Note that this does not change during traversal as we do not step the env.
-            root_next_player = env.get_next_player()
+            root_current_player = current_player if current_role == 'max' else next_player
+            root_next_player = current_player if current_role == 'min' else next_player
             leaf_value = self.evaluate_leaf(env, observation, root_current_player, root_next_player)
             return leaf_value
         else:
@@ -78,5 +90,4 @@ class MinimaxAgent(BaseAgent):
         Implementing: score difference between players.
         '''
         return env.get_score(observation["board"], root_current_player) - env.get_score(observation["board"], root_next_player)
-
 
