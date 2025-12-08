@@ -9,5 +9,8 @@ List of Agents:
     4. AC Agent (?)
     5. ...
 '''
+from .random import RandomAgent
+from .minimax import MinimaxAgent
+from .alphabeta import AlphaBetaMinimaxAgent
 
-__all__ = ['RandomAgent', 'MinimaxAgent']
+__all__ = ['RandomAgent', 'MinimaxAgent', 'AlphaBetaMinimaxAgent']
