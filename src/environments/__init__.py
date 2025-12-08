@@ -6,6 +6,7 @@ sys.path.insert(0, str(project_root))
 
 from gymnasium.envs.registration import register
 from .two_dims import TwoDims
+from .three_dims import ThreeDims
 
 def register_envs():
     register(
