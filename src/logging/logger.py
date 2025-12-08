@@ -14,7 +14,13 @@ class Logger:
                  ) -> None:
         self.log_dir = log_dir
         self.unique_id = str(uuid.uuid4())
-        self.experiment_name = experiment_name + self.unique_id if experiment_name is not None else self.unique_id
+        if experiment_name is None:
+            self.experiment_name = self.unique_id
+        else:
+            if os.path.isfile(os.path.join(self.log_dir, experiment_name)):
+                self.experiment_name = f"{experiment_name}_{self.unique_id}"
+            else:
+                self.experiment_name = experiment_name
 
         self.filepath = os.path.join(self.log_dir, f"{self.experiment_name}.h5")
         self.episode_count = 0
