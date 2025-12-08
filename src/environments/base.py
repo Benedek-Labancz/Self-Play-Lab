@@ -72,6 +72,7 @@ class BaseEnv(gym.Env, ABC):
         '''
         return {
             "current_player": self._current_player,
+            "next_player": self._next_player,
             "board": self._board_state,
             "action_mask": self.get_action_mask(self._board_state)
         }
@@ -131,8 +132,10 @@ class BaseEnv(gym.Env, ABC):
         new_state = deepcopy(state)
         new_state[tuple(action)] = player
         reward = self._get_reward(state, player, action, new_state)
+        player_idx = self._players.index(player)
         observation = {
-            "current_player": player,
+            "current_player": self._players[1] if player_idx == 0 else self._players[0],
+            "next_player": player,
             "board": new_state,
             "action_mask": self.get_action_mask(new_state)
         }
