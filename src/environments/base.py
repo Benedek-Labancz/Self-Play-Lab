@@ -23,6 +23,8 @@ class BaseEnv(gym.Env, ABC):
                  bonus_value: Optional[float] = 100, **kwargs) -> None:
         super().__init__()
 
+        self.config = None
+
         self.render_mode = render_mode
         self.max_timesteps = np.inf if max_timesteps is None else max_timesteps
         self.reward_type = reward_type
@@ -45,6 +47,10 @@ class BaseEnv(gym.Env, ABC):
         # Reset the env to reset timesteps, initialize scores,
         # current and next player
         self.reset()
+
+
+    def set_config(self, config: dict) -> None:
+        self.config = config
 
     def _switch_player(self) -> None:
         self._current_player, self._next_player = self._next_player, self._current_player
