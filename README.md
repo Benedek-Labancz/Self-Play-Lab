@@ -125,7 +125,7 @@ from src.analyzer import BaseAnalyzer
 from src.visualizer import BaseVisualizer
 import h5py
 
-with h5py.File("logs/experiment.h5", 'r') as experiment_file:
+with h5py.File("logs/experiment.h5", 'a') as experiment_file:
     analyzer = BaseAnalyzer()
     mean_returns = analyzer.compute_mean_undiscounted_return_per_episode(experiment_file)
 
@@ -147,7 +147,6 @@ This project is currently under active development. The following components are
 - Advanced training scripts
 - Additional agent architectures
 - Extended analysis capabilities
-- Performance optimizations
 
 ## Dependencies
 
