@@ -42,7 +42,6 @@ Self-Play-Lab/
 │   └── generations/    # Experiment generation configs
 ├── scripts/
 │   ├── lab/           # Experiment scripts
-│   └── ui/            # User interface scripts
 ├── src/
 │   ├── agents/        # Agent implementations
 │   ├── analyzer/      # Analysis tools
